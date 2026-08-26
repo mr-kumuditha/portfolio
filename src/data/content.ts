@@ -571,6 +571,10 @@ export const projects: Project[] = [
   },
 ];
 
+export function getProjectBySlug(slug: string) {
+  return projects.find((project) => project.id === slug);
+}
+
 export const process = [
   {
     index: "01",
