@@ -32,18 +32,36 @@ const spaceGrotesk = Space_Grotesk({
 
 export const metadata: Metadata = {
   title: `${profile.name} | ${profile.role}`,
-  description: profile.tagline,
+  description:
+    "Kumuditha Tharinda Liyanage is a software engineering student and full-stack developer in Sri Lanka building mobile, web, desktop and cloud software.",
   metadataBase: new URL(`https://${profile.domain}`),
+  alternates: {
+    canonical: "/",
+  },
+  applicationName: "Kumuditha Tharinda Liyanage Portfolio",
+  authors: [{ name: profile.name, url: `https://${profile.domain}` }],
+  creator: profile.name,
+  keywords: [
+    "Kumuditha Tharinda Liyanage",
+    "software engineering student",
+    "full stack developer Sri Lanka",
+    "Flutter developer Sri Lanka",
+    "Next.js developer Sri Lanka",
+  ],
   openGraph: {
     title: `${profile.name} | ${profile.role}`,
-    description: profile.tagline,
+    description:
+      "Software engineering student and full-stack developer in Sri Lanka building practical mobile, web, desktop and cloud software.",
+    url: "/",
+    siteName: `${profile.name} Portfolio`,
     type: "website",
     images: [{ url: profile.photo, width: 900, height: 900 }],
   },
   twitter: {
     card: "summary_large_image",
     title: `${profile.name} | ${profile.role}`,
-    description: profile.tagline,
+    description:
+      "Software engineering student and full-stack developer in Sri Lanka building practical software.",
     images: [profile.photo],
   },
 };
