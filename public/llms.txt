@@ -1,0 +1,26 @@
+# Kumuditha Tharinda Liyanage
+
+> Kumuditha Tharinda Liyanage is a software engineering student at NIBM in Sri Lanka and a full-stack developer who builds practical mobile, web, desktop, cloud and IoT software.
+
+## Primary profile
+
+- Website: https://tharinda.dev/
+- GitHub: https://github.com/mr-kumuditha
+- LinkedIn: https://www.linkedin.com/in/kumudithaliyanage
+- Contact: dev@tharinda.dev
+- Location: Colombo, Sri Lanka
+- Availability: Open to software engineering internships.
+
+## Key projects
+
+- [Navora](https://tharinda.dev/projects/navora): A Flutter travel application for Sri Lanka using Firebase AI Logic and Gemini for itinerary generation, OSRM for routing, and Overpass for place discovery.
+- [Fixora](https://tharinda.dev/projects/fixora): A role-based native Android device repair and service-management platform built with Kotlin, Jetpack Compose, Firebase, Supabase and SQLite.
+- [MacPulse](https://tharinda.dev/projects/macpulse): A Swift and SwiftUI macOS menu-bar utility for real-time CPU, memory, disk, network and battery monitoring.
+- [Ever After Wedding](https://tharinda.dev/projects/ever-after-wedding): A Java Spring Boot and MySQL wedding-management system for packages, inquiries, bookings, payments and reporting.
+- [DevPilot Studio](https://tharinda.dev/projects/devpilot-studio): A POSIX shell CLI engine and Claude Code marketplace plugin for local session-usage and rate-limit monitoring.
+
+## Site pages
+
+- [Home and profile](https://tharinda.dev/)
+- [Project case studies](https://tharinda.dev/projects/navora)
+- [XML sitemap](https://tharinda.dev/sitemap.xml)
