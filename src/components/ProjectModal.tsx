@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { ArrowUpRight, X } from "lucide-react";
@@ -169,6 +170,13 @@ export default function ProjectModal({
                     <p className="text-sm leading-relaxed text-fg-muted">
                       {project.description}
                     </p>
+
+                    <Link
+                      href={`/projects/${project.id}`}
+                      className="mt-5 inline-flex text-sm font-medium text-fg transition-colors hover:text-accent"
+                    >
+                      Read the full case study →
+                    </Link>
 
                     {project.repo && (
                       <a

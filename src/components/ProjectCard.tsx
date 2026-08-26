@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useRef } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "motion/react";
 import { ArrowUpRight } from "lucide-react";
@@ -149,13 +150,17 @@ export default function ProjectCard({
           )}
         </div>
 
-        <p className="mt-6 flex items-center gap-2 text-[11px] uppercase tracking-[0.22em] text-fg-dim transition-colors duration-300 group-hover:text-fg-muted">
-          View case study
+        <Link
+          href={`/projects/${project.id}`}
+          onClick={(event) => event.stopPropagation()}
+          className="relative z-20 mt-6 flex w-fit items-center gap-2 text-[11px] uppercase tracking-[0.22em] text-fg-dim transition-colors duration-300 hover:text-fg-muted"
+        >
+          Read full case study
           <span
             className="h-px w-6 transition-all duration-400 group-hover:w-10"
             style={{ background: project.accent }}
           />
-        </p>
+        </Link>
       </div>
     </motion.article>
   );
