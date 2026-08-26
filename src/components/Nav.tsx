@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import MagneticButton from "./MagneticButton";
 import SoundToggle from "./SoundToggle";
@@ -14,9 +15,11 @@ const sections = [
 ];
 
 export default function Nav() {
+  const pathname = usePathname();
   const [active, setActive] = useState("about");
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const homeHref = (id: string) => (pathname === "/" ? `#${id}` : `/#${id}`);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -65,7 +68,7 @@ export default function Nav() {
       >
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5 sm:px-10">
           <a
-            href="#top"
+            href={pathname === "/" ? "#top" : "/"}
             data-cursor-hover
             className="font-display text-sm font-medium tracking-widest text-fg"
           >
@@ -76,7 +79,7 @@ export default function Nav() {
             {sections.map((s) => (
               <a
                 key={s.id}
-                href={`#${s.id}`}
+                href={homeHref(s.id)}
                 data-cursor-hover
                 className={`group relative text-xs font-medium uppercase tracking-[0.2em] transition-colors ${
                   active === s.id ? "text-accent" : "text-fg-muted hover:text-fg"
@@ -98,7 +101,7 @@ export default function Nav() {
 
             <MagneticButton
               as="a"
-              href="#contact"
+              href={homeHref("contact")}
               className="hidden rounded-full border border-border px-5 py-2 text-xs font-medium uppercase tracking-[0.2em] text-fg transition-colors hover:border-accent hover:text-accent md:inline-block"
             >
               Let&apos;s Talk
@@ -141,7 +144,7 @@ export default function Nav() {
               {sections.map((s, i) => (
                 <motion.a
                   key={s.id}
-                  href={`#${s.id}`}
+                  href={homeHref(s.id)}
                   onClick={() => setOpen(false)}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
