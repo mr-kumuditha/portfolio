@@ -1,0 +1,343 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #08090a;
+  --bg-elevated: #0d0f11;
+  --bg-glass: rgba(18, 20, 23, 0.62);
+  --fg: #f2f1ec;
+  --fg-muted: #8b8f95;
+  --fg-dim: #5c6167;
+  --accent: #c6ff5e;
+  --accent-dim: #7a9c3f;
+  --border: rgba(242, 241, 236, 0.09);
+  --border-strong: rgba(242, 241, 236, 0.16);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-elevated: var(--bg-elevated);
+  --color-bg-glass: var(--bg-glass);
+  --color-fg: var(--fg);
+  --color-fg-muted: var(--fg-muted);
+  --color-fg-dim: var(--fg-dim);
+  --color-accent: var(--accent);
+  --color-accent-dim: var(--accent-dim);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-space-grotesk);
+}
+
+* {
+  border-color: var(--border);
+}
+
+html {
+  background: var(--bg);
+  /* `clip` rather than `hidden`: it stops decorative glows from widening the
+     page without turning <html> into a scroll container (which would break
+     position: sticky inside the project modal). */
+  overflow-x: clip;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  overflow-x: clip;
+}
+
+::selection {
+  background: var(--accent);
+  color: #08090a;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+  background: #26282b;
+  border-radius: 999px;
+  border: 2px solid var(--bg);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-dim);
+}
+
+@media (pointer: fine) {
+  .cursor-none-fine {
+    cursor: none;
+  }
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+/* ---------- animated background ---------- */
+
+.aurora {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(110px);
+  opacity: 0.45;
+  will-change: transform;
+}
+
+.aurora-a {
+  top: -18%;
+  right: -12%;
+  width: 46rem;
+  height: 46rem;
+  background: radial-gradient(
+    circle at 30% 30%,
+    rgba(198, 255, 94, 0.42),
+    transparent 68%
+  );
+  animation: drift-a 26s ease-in-out infinite;
+}
+
+.aurora-b {
+  bottom: -22%;
+  left: -16%;
+  width: 40rem;
+  height: 40rem;
+  background: radial-gradient(
+    circle at 60% 40%,
+    rgba(45, 212, 191, 0.3),
+    transparent 68%
+  );
+  animation: drift-b 32s ease-in-out infinite;
+}
+
+.aurora-c {
+  top: 32%;
+  left: 38%;
+  width: 34rem;
+  height: 34rem;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(129, 140, 248, 0.22),
+    transparent 70%
+  );
+  animation: drift-c 38s ease-in-out infinite;
+}
+
+@keyframes drift-a {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-8vw, 6vh, 0) scale(1.14);
+  }
+}
+
+@keyframes drift-b {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1.06);
+  }
+  50% {
+    transform: translate3d(9vw, -7vh, 0) scale(0.92);
+  }
+}
+
+@keyframes drift-c {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(0.95);
+  }
+  33% {
+    transform: translate3d(6vw, 5vh, 0) scale(1.1);
+  }
+  66% {
+    transform: translate3d(-5vw, -4vh, 0) scale(1);
+  }
+}
+
+.grid-overlay {
+  background-image: linear-gradient(
+      to right,
+      rgba(242, 241, 236, 0.028) 1px,
+      transparent 1px
+    ),
+    linear-gradient(to bottom, rgba(242, 241, 236, 0.028) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: radial-gradient(ellipse at 50% 40%, black 20%, transparent 78%);
+  -webkit-mask-image: radial-gradient(
+    ellipse at 50% 40%,
+    black 20%,
+    transparent 78%
+  );
+}
+
+.grid-floor {
+  background-image: linear-gradient(
+      to right,
+      rgba(198, 255, 94, 0.14) 1px,
+      transparent 1px
+    ),
+    linear-gradient(to bottom, rgba(198, 255, 94, 0.14) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: linear-gradient(to top, black, transparent 72%);
+  -webkit-mask-image: linear-gradient(to top, black, transparent 72%);
+  animation: floor-scroll 12s linear infinite;
+}
+
+@keyframes floor-scroll {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 0 64px;
+  }
+}
+
+.grain {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  opacity: 0.045;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ---------- surfaces ---------- */
+
+.glass {
+  background: var(--bg-glass);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+}
+
+/* Mobile GPUs pay dearly for large blur radii, and these are decorative.
+   Shrink the aurora blur and drop backdrop-filter for an opaque panel. */
+@media (max-width: 767px) {
+  .aurora {
+    filter: blur(64px);
+    opacity: 0.38;
+  }
+
+  .aurora-c {
+    display: none;
+  }
+
+  .glass {
+    background: var(--bg-elevated);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .grid-floor {
+    animation: none;
+  }
+}
+
+.card-sheen {
+  position: relative;
+  isolation: isolate;
+}
+
+.card-sheen::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    140deg,
+    rgba(242, 241, 236, 0.16),
+    rgba(242, 241, 236, 0.02) 42%,
+    transparent 60%
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* ---------- marquee ---------- */
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 34s linear infinite;
+}
+
+.marquee-host:hover .animate-marquee {
+  animation-play-state: paused;
+}
+
+.mask-fade-x {
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 7%,
+    black 93%,
+    transparent
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 7%,
+    black 93%,
+    transparent
+  );
+}
+
+/* ---------- misc ---------- */
+
+@keyframes shimmer {
+  from {
+    background-position: -220% 0;
+  }
+  to {
+    background-position: 220% 0;
+  }
+}
+
+.text-shimmer {
+  background: linear-gradient(
+    100deg,
+    var(--fg) 40%,
+    var(--accent) 50%,
+    var(--fg) 60%
+  );
+  background-size: 220% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer 6s linear infinite;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
