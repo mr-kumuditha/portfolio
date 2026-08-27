@@ -101,35 +101,40 @@ export default function ProfileImageSwitcher({
 
   return (
     <div ref={rootRef} className="portrait-card group/portrait">
-      <div className="portrait-card__inner card-sheen relative overflow-hidden rounded-[2rem] border border-border-strong bg-bg-elevated">
-        <Image
-          src={src}
-          alt={alt}
-          width={900}
-          height={900}
-          // Caps at ~384px wide in the layout, so don't let Next serve
-          // the 1920px variant for it.
-          sizes="(max-width: 1024px) min(24rem, 90vw), 24rem"
-          priority
-          fetchPriority="high"
-          className="portrait-card__img portrait-card__img--base aspect-square w-full object-cover"
-        />
-        <Image
-          src={hoverSrc}
-          alt=""
-          aria-hidden
-          width={900}
-          height={900}
-          sizes="(max-width: 1024px) min(24rem, 90vw), 24rem"
-          // Not part of the initial view: let it load lazily so it never
-          // competes with LCP.
-          loading="lazy"
-          className="portrait-card__img portrait-card__img--hover absolute inset-0 aspect-square w-full object-cover"
-        />
+      {/* Tilt lives here, unclipped — see the comment on .portrait-card__tilt
+          in globals.css for why this can't be merged into the div below. */}
+      <div className="portrait-card__tilt">
+        <div className="portrait-card__inner card-sheen relative overflow-hidden rounded-[2rem] border border-border-strong bg-bg-elevated">
+          <Image
+            src={src}
+            alt={alt}
+            width={900}
+            height={900}
+            // Caps at ~384px wide in the layout, so don't let Next serve
+            // the 1920px variant for it.
+            sizes="(max-width: 1024px) min(24rem, 90vw), 24rem"
+            // The portrait begins below the hero. Loading it lazily prevents a
+            // non-visible image from competing with the headline's first paint.
+            loading="lazy"
+            className="portrait-card__img portrait-card__img--base aspect-square w-full object-cover"
+          />
+          <Image
+            src={hoverSrc}
+            alt=""
+            aria-hidden
+            width={900}
+            height={900}
+            sizes="(max-width: 1024px) min(24rem, 90vw), 24rem"
+            // Not part of the initial view: let it load lazily so it never
+            // competes with LCP.
+            loading="lazy"
+            className="portrait-card__img portrait-card__img--hover absolute inset-0 aspect-square w-full object-cover"
+          />
 
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-bg-elevated via-transparent to-transparent" />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-bg-elevated via-transparent to-transparent" />
 
-        {children}
+          {children}
+        </div>
       </div>
     </div>
   );
