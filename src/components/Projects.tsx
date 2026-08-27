@@ -1,17 +1,21 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useState } from "react";
 import { projects, type Project } from "@/data/content";
 import SectionHeading from "./SectionHeading";
 import ProjectCard from "./ProjectCard";
-import ProjectModal from "./ProjectModal";
 import Reveal from "./Reveal";
+
+// The modal is only needed after someone opens a project. Keeping it out of
+// the landing-page bundle shortens the first interaction and paint path.
+const ProjectModal = dynamic(() => import("./ProjectModal"), { ssr: false });
 
 export default function Projects() {
   const [active, setActive] = useState<Project | null>(null);
 
   return (
-    <section id="work" className="relative px-6 py-28 sm:px-10 sm:py-36">
+    <section id="work" className="deferred-section deferred-projects relative px-6 py-28 sm:px-10 sm:py-36">
       <div className="mx-auto max-w-7xl">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <SectionHeading
@@ -35,7 +39,7 @@ export default function Projects() {
         </div>
       </div>
 
-      <ProjectModal project={active} onClose={() => setActive(null)} />
+      {active && <ProjectModal project={active} onClose={() => setActive(null)} />}
     </section>
   );
 }
