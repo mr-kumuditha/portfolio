@@ -6,32 +6,60 @@ import { useSound } from "./SoundContext";
 import { profile } from "@/data/content";
 
 /** How long the splash holds before the exit wipe starts. */
-const DURATION = 6000;
+const DURATION = 15000;
 /** The counter finishes a beat early so 100% is readable before we leave. */
-const COUNT_DURATION = 5200;
+const COUNT_DURATION = 14000;
 
 const PHASES = [
   "initialising runtime",
+  "resolving modules",
   "loading assets",
+  "decoding textures",
   "compiling motion",
+  "warming shaders",
   "mounting sections",
+  "linking routes",
   "ready",
+];
+
+/**
+ * Boot log lines, each revealed once the counter passes its threshold.
+ *
+ * Fifteen seconds is a long time to look at a number, so the log gives the
+ * sequence something to actually do between the counter's stalls.
+ */
+const LOG: { at: number; text: string }[] = [
+  { at: 4, text: "init runtime — ok" },
+  { at: 13, text: "resolve 42 modules — ok" },
+  { at: 24, text: "fetch media/*.webp — ok" },
+  { at: 34, text: "decode 9 textures — ok" },
+  { at: 45, text: "compile motion graph — ok" },
+  { at: 56, text: "warm shader cache — ok" },
+  { at: 67, text: "mount 8 sections — ok" },
+  { at: 78, text: "link static routes — ok" },
+  { at: 88, text: "hydrate client tree — ok" },
+  { at: 96, text: "handoff — ready" },
 ];
 
 /**
  * Control points for the loading counter, as [progress 0-1, percent 0-100].
  *
  * Deliberately uneven: real loading stalls, and a counter that sprints then
- * hesitates reads as alive where a linear ramp reads as a timer.
+ * hesitates reads as alive where a linear ramp reads as a timer. Over 15s the
+ * stalls matter more, so there are more of them and they sit longer.
  */
 const CURVE: [number, number][] = [
   [0, 0],
-  [0.12, 26],
-  [0.26, 33],
-  [0.42, 61],
-  [0.54, 67],
-  [0.72, 89],
-  [0.86, 94],
+  [0.07, 18],
+  [0.16, 22],
+  [0.26, 41],
+  [0.35, 44],
+  [0.46, 63],
+  [0.56, 66],
+  [0.67, 81],
+  [0.77, 84],
+  [0.88, 96],
+  [0.95, 97],
   [1, 100],
 ];
 
@@ -54,7 +82,7 @@ const RING_C = 2 * Math.PI * RING_R;
 export default function Splash() {
   const [done, setDone] = useState(false);
   const [count, setCount] = useState(0);
-  const { play } = useSound();
+  const { play, fadeOut } = useSound();
   const played = useRef(false);
 
   useEffect(() => {
@@ -71,7 +99,9 @@ export default function Splash() {
 
     if (!played.current) {
       played.current = true;
-      play();
+      // The track is ~10s and the splash runs 15s, so loop it and fade out
+      // with the exit wipe rather than letting it stop in the middle.
+      play({ loop: true });
     }
 
     const start = performance.now();
@@ -97,6 +127,7 @@ export default function Splash() {
     const timer = setTimeout(() => {
       setCount(100);
       setDone(true);
+      fadeOut(1000);
     }, DURATION);
 
     return () => {
@@ -104,7 +135,7 @@ export default function Splash() {
       clearInterval(poll);
       clearTimeout(timer);
     };
-  }, [play]);
+  }, [play, fadeOut]);
 
   useEffect(() => {
     document.body.style.overflow = done ? "" : "hidden";
@@ -143,12 +174,15 @@ export default function Splash() {
             exit={{ opacity: 0, scale: 0.97 }}
             transition={{ duration: 0.35, ease: "easeIn" }}
           >
-            {/* drifting glow */}
+            {/* drifting glow, breathing for the length of the sequence */}
             <motion.div
               className="pointer-events-none absolute h-[520px] w-[520px] rounded-full bg-accent/10 blur-[110px]"
               initial={{ opacity: 0, scale: 0.6 }}
-              animate={{ opacity: [0, 0.9, 0.55, 0.9], scale: [0.6, 1.1, 1] }}
-              transition={{ duration: 5, ease: "easeInOut" }}
+              animate={{
+                opacity: [0, 0.9, 0.5, 0.85, 0.55, 0.9],
+                scale: [0.6, 1.1, 0.95, 1.08, 1],
+              }}
+              transition={{ duration: 14, ease: "easeInOut" }}
             />
 
             {/* grid, drawn in then held */}
@@ -195,7 +229,7 @@ export default function Splash() {
                   strokeDasharray="3 9"
                   style={{ transformOrigin: "center" }}
                   animate={{ rotate: 360 }}
-                  transition={{ duration: 24, repeat: Infinity, ease: "linear" }}
+                  transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
                 />
                 {/* progress arc */}
                 <motion.circle
@@ -262,11 +296,33 @@ export default function Splash() {
                     duration: 1.6,
                     delay: 1.5,
                     repeat: Infinity,
-                    repeatDelay: 1.5,
+                    repeatDelay: 2.2,
                     ease: "easeInOut",
                   }}
                 />
               </div>
+            </div>
+
+            {/* boot log — lines land as the counter passes each threshold */}
+            <div className="mt-6 flex h-24 w-60 flex-col justify-start gap-1 overflow-hidden sm:w-80">
+              <AnimatePresence initial={false}>
+                {LOG.filter((l) => count >= l.at)
+                  .slice(-4)
+                  .map((line) => (
+                    <motion.div
+                      key={line.text}
+                      layout
+                      initial={{ opacity: 0, x: -8 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                      className="flex items-center gap-2 font-mono text-[10px] tracking-[0.12em] text-fg-dim"
+                    >
+                      <span className="text-accent/70">›</span>
+                      <span className="truncate">{line.text}</span>
+                    </motion.div>
+                  ))}
+              </AnimatePresence>
             </div>
 
             {/* progress bar */}
@@ -274,7 +330,7 @@ export default function Splash() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              className="relative mt-8 w-60 sm:w-80"
+              className="relative mt-2 w-60 sm:w-80"
             >
               <div className="relative h-px w-full bg-border">
                 <motion.div
