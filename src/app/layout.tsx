@@ -1,6 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Space_Grotesk } from "next/font/google";
 import "./globals.css";
+import SmoothScroll from "@/components/SmoothScroll";
+import CustomCursor from "@/components/CustomCursor";
+import Splash from "@/components/Splash";
 import AnimatedBackground from "@/components/AnimatedBackground";
 import ScrollProgress from "@/components/ScrollProgress";
 import Nav from "@/components/Nav";
@@ -77,11 +80,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} ${spaceGrotesk.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-bg text-fg">
+      <body className="min-h-full flex flex-col bg-bg text-fg cursor-none-fine">
         <SoundProvider>
           <MotionProvider>
             <AnimatedBackground />
             <div className="grain" />
+            <Splash />
+            <SmoothScroll />
+            <CustomCursor />
             <ScrollProgress />
             <Nav />
             {/* `relative` only, no z-index: a z-index here would make main a
