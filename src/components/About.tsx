@@ -1,11 +1,11 @@
 "use client";
 
-import Image from "next/image";
 import { motion } from "motion/react";
 import { about, profile, stats, education } from "@/data/content";
 import SectionHeading from "./SectionHeading";
 import StatCounter from "./StatCounter";
 import Reveal from "./Reveal";
+import ProfileImageSwitcher from "./ProfileImageSwitcher";
 import { GithubIcon, LinkedinIcon } from "./icons";
 
 export default function About() {
@@ -29,21 +29,11 @@ export default function About() {
                 }}
               />
 
-              <div className="card-sheen relative overflow-hidden rounded-[2rem] border border-border-strong bg-bg-elevated">
-                <Image
-                  src={profile.photo}
-                  alt={profile.name}
-                  width={900}
-                  height={900}
-                  // Caps at ~384px wide in the layout, so don't let Next serve
-                  // the 1920px variant for it.
-                  sizes="(max-width: 1024px) min(24rem, 90vw), 24rem"
-                  priority
-                  fetchPriority="high"
-                  className="aspect-square w-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-bg-elevated via-transparent to-transparent" />
-
+              <ProfileImageSwitcher
+                src={profile.photo}
+                hoverSrc={profile.photoAlt}
+                alt={profile.name}
+              >
                 <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-6">
                   <div>
                     <p className="font-display text-lg font-medium text-fg">
@@ -60,7 +50,7 @@ export default function About() {
                       rel="noopener noreferrer"
                       data-cursor-hover
                       aria-label="GitHub"
-                      className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-bg/60 text-fg-muted backdrop-blur-md transition-colors hover:border-accent hover:text-accent"
+                      className="flex h-9 w-9 items-center justify-center neon-hover rounded-full border border-border bg-bg/60 text-fg-muted backdrop-blur-md transition-colors hover:border-accent hover:text-accent"
                     >
                       <GithubIcon className="h-4 w-4" />
                     </a>
@@ -70,13 +60,13 @@ export default function About() {
                       rel="noopener noreferrer"
                       data-cursor-hover
                       aria-label="LinkedIn"
-                      className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-bg/60 text-fg-muted backdrop-blur-md transition-colors hover:border-accent hover:text-accent"
+                      className="flex h-9 w-9 items-center justify-center neon-hover rounded-full border border-border bg-bg/60 text-fg-muted backdrop-blur-md transition-colors hover:border-accent hover:text-accent"
                     >
                       <LinkedinIcon className="h-4 w-4" />
                     </a>
                   </div>
                 </div>
-              </div>
+              </ProfileImageSwitcher>
             </div>
           </Reveal>
 
