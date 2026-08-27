@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useMotionValue, useSpring } from "motion/react";
+import { useEffect, useRef } from "react";
+import { damp, withPointerEffects } from "@/lib/pointer";
 
 type MagneticButtonProps = {
   children: React.ReactNode;
@@ -14,6 +14,16 @@ type MagneticButtonProps = {
   onClick?: () => void;
 };
 
+/** How quickly the element catches up to the pointer, per frame. */
+const EASE = 0.16;
+
+/**
+ * Pulls its child slightly toward the pointer, easing back on leave.
+ *
+ * Uses a plain rAF loop writing a single transform instead of a motion spring:
+ * the movement is one property on one element, so a physics library earns
+ * nothing here and the loop can stop entirely once the element is at rest.
+ */
 export default function MagneticButton({
   children,
   className = "",
@@ -22,38 +32,85 @@ export default function MagneticButton({
   ...tagProps
 }: MagneticButtonProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const springX = useSpring(x, { stiffness: 200, damping: 15, mass: 0.4 });
-  const springY = useSpring(y, { stiffness: 200, damping: 15, mass: 0.4 });
+  // Lets the rAF loop read the latest strength without re-subscribing.
+  const strengthRef = useRef(strength);
 
-  function handleMove(e: React.MouseEvent<HTMLDivElement>) {
+  useEffect(() => {
+    strengthRef.current = strength;
+  }, [strength]);
+
+  useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const rect = el.getBoundingClientRect();
-    const relX = e.clientX - rect.left - rect.width / 2;
-    const relY = e.clientY - rect.top - rect.height / 2;
-    x.set(relX * strength);
-    y.set(relY * strength);
-  }
 
-  function handleLeave() {
-    x.set(0);
-    y.set(0);
-  }
+    return withPointerEffects(() => {
+      let rafId = 0;
+      let targetX = 0;
+      let targetY = 0;
+      let currentX = 0;
+      let currentY = 0;
+      let running = false;
+
+      const settle = () => {
+        currentX = damp(currentX, targetX, EASE);
+        currentY = damp(currentY, targetY, EASE);
+
+        const atRest =
+          Math.abs(currentX - targetX) < 0.01 &&
+          Math.abs(currentY - targetY) < 0.01;
+
+        if (atRest) {
+          currentX = targetX;
+          currentY = targetY;
+          running = false;
+        }
+
+        el.style.transform =
+          currentX === 0 && currentY === 0
+            ? ""
+            : `translate3d(${currentX.toFixed(2)}px, ${currentY.toFixed(2)}px, 0)`;
+
+        if (!atRest) rafId = requestAnimationFrame(settle);
+      };
+
+      const start = () => {
+        if (running) return;
+        running = true;
+        rafId = requestAnimationFrame(settle);
+      };
+
+      const onMove = (event: PointerEvent) => {
+        const rect = el.getBoundingClientRect();
+        targetX =
+          (event.clientX - rect.left - rect.width / 2) * strengthRef.current;
+        targetY =
+          (event.clientY - rect.top - rect.height / 2) * strengthRef.current;
+        start();
+      };
+
+      const onLeave = () => {
+        targetX = 0;
+        targetY = 0;
+        start();
+      };
+
+      el.addEventListener("pointermove", onMove);
+      el.addEventListener("pointerleave", onLeave);
+
+      return () => {
+        cancelAnimationFrame(rafId);
+        el.removeEventListener("pointermove", onMove);
+        el.removeEventListener("pointerleave", onLeave);
+        el.style.transform = "";
+      };
+    });
+  }, []);
 
   return (
-    <motion.div
-      ref={ref}
-      onMouseMove={handleMove}
-      onMouseLeave={handleLeave}
-      style={{ x: springX, y: springY }}
-      className="inline-block"
-      data-cursor-hover
-    >
+    <div ref={ref} className="magnetic inline-block" data-cursor-hover>
       <Tag className={`inline-block ${className}`} {...tagProps}>
         {children}
       </Tag>
-    </motion.div>
+    </div>
   );
 }
