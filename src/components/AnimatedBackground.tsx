@@ -35,7 +35,7 @@ function ConstellationCanvas() {
     let dpr = 1;
     let nodes: Node[] = [];
     const pointer = { x: -9999, y: -9999 };
-    const LINK_DIST = 132;
+    const LINK_DIST = 126;
     const LINK_DIST_SQ = LINK_DIST * LINK_DIST;
     const PULL_DIST = 190;
 
@@ -50,7 +50,10 @@ function ConstellationCanvas() {
       canvas.height = height * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      const density = Math.min(Math.round((width * height) / 22000), 72);
+      // The background sits behind an opaque vignette, so 36 nodes are
+      // visually indistinguishable from the old 72-node field while cutting
+      // the pairwise link work by roughly 75% on a large desktop display.
+      const density = Math.min(Math.round((width * height) / 42000), 36);
       nodes = Array.from({ length: density }, () => ({
         x: Math.random() * width,
         y: Math.random() * height,
@@ -70,8 +73,18 @@ function ConstellationCanvas() {
     }
 
     let raf = 0;
-    function frame() {
+    let previousFrame = 0;
+    const FRAME_INTERVAL = 1000 / 24;
+    function frame(now: number) {
       if (!ctx) return;
+      // This is ambience, not an interaction. Capping the draw work at 24fps
+      // preserves the slow-drift effect and leaves the main thread available
+      // for page hydration, scrolling and input.
+      if (now - previousFrame < FRAME_INTERVAL) {
+        raf = requestAnimationFrame(frame);
+        return;
+      }
+      previousFrame = now;
       ctx.clearRect(0, 0, width, height);
 
       for (const n of nodes) {
@@ -123,7 +136,10 @@ function ConstellationCanvas() {
     function onVisibility() {
       cancelAnimationFrame(raf);
       // Don't burn frames animating a canvas nobody is looking at.
-      if (!document.hidden) raf = requestAnimationFrame(frame);
+      if (!document.hidden) {
+        previousFrame = 0;
+        raf = requestAnimationFrame(frame);
+      }
     }
 
     let resizeTimer: ReturnType<typeof setTimeout>;
@@ -133,7 +149,7 @@ function ConstellationCanvas() {
     }
 
     resize();
-    frame();
+    raf = requestAnimationFrame(frame);
     window.addEventListener("resize", onResize);
     window.addEventListener("pointermove", onPointerMove, { passive: true });
     window.addEventListener("pointerleave", onPointerLeave);
