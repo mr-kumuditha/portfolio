@@ -313,7 +313,7 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .portrait-card__inner {
+  .portrait-card__tilt {
     transform: none;
     will-change: auto;
   }
