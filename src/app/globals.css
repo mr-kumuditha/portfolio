@@ -263,6 +263,128 @@ body {
   pointer-events: none;
 }
 
+/* ---------- portrait hover switch ---------- */
+
+.portrait-card {
+  --tilt-x: 0deg;
+  --tilt-y: 0deg;
+  perspective: 1000px;
+}
+
+.portrait-card__inner {
+  /* Only transform/opacity animate here, so this stays off the layout path. */
+  transform: rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.portrait-card__img {
+  transition: opacity 520ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 620ms cubic-bezier(0.16, 1, 0.3, 1),
+    filter 520ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.portrait-card__img--hover {
+  opacity: 0;
+  transform: scale(1.08) rotate(1.2deg);
+  filter: blur(6px);
+}
+
+/* Hover state is only reachable on devices that actually have a cursor. */
+@media (hover: hover) and (pointer: fine) {
+  .portrait-card[data-hovered] .portrait-card__img--base {
+    opacity: 0;
+    transform: scale(1.04) rotate(-1deg);
+    filter: blur(6px);
+  }
+
+  .portrait-card[data-hovered] .portrait-card__img--hover {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+    filter: blur(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portrait-card__inner {
+    transform: none;
+    will-change: auto;
+  }
+
+  /* Keep the crossfade, drop the blur and movement. */
+  .portrait-card__img {
+    transition: opacity 200ms linear;
+    transform: none;
+    filter: none;
+  }
+}
+
+/* ---------- interactive element response ---------- */
+
+/*
+ * Neon edge + lift shared by the social icon buttons and project cards.
+ * Transform/opacity/box-shadow only, so nothing here triggers layout.
+ */
+@media (hover: hover) and (pointer: fine) {
+  .neon-hover {
+    transition: transform 350ms cubic-bezier(0.16, 1, 0.3, 1),
+      border-color 350ms ease, color 350ms ease, box-shadow 350ms ease;
+  }
+
+  .neon-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 0 1px color-mix(in oklab, var(--accent) 45%, transparent),
+      0 8px 26px -12px color-mix(in oklab, var(--accent) 55%, transparent);
+  }
+
+  /* The magnetic wrapper already moves; only add the glow to its child. */
+  .magnetic > * {
+    transition: box-shadow 350ms ease, background-color 300ms ease,
+      color 300ms ease, border-color 300ms ease;
+  }
+
+  .magnetic:hover > * {
+    box-shadow: 0 10px 30px -14px
+      color-mix(in oklab, var(--accent) 70%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .neon-hover,
+  .magnetic > * {
+    transition: none;
+  }
+
+  .neon-hover:hover {
+    transform: none;
+  }
+}
+
+/* ---------- cursor glow ---------- */
+
+.cursor-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 600ms ease;
+  background: radial-gradient(
+    38rem 38rem at var(--glow-x, 50%) var(--glow-y, 30%),
+    color-mix(in oklab, var(--accent) 14%, transparent),
+    transparent 62%
+  );
+}
+
+.cursor-glow[data-active] {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cursor-glow {
+    display: none;
+  }
+}
+
 /* ---------- marquee ---------- */
 
 @keyframes marquee {
