@@ -271,8 +271,15 @@ body {
   perspective: 1000px;
 }
 
-.portrait-card__inner {
-  /* Only transform/opacity animate here, so this stays off the layout path. */
+/*
+ * The 3D tilt lives on this wrapper, not on .portrait-card__inner. WebKit has
+ * a longstanding bug where an element that is BOTH 3D-transformed AND clipped
+ * (overflow: hidden + border-radius) flickers or drops frames — Safari only,
+ * Chromium is unaffected. Keeping the transform on an unclipped parent and
+ * the clipping on a flat child sidesteps it entirely; the clipped content
+ * still visually tilts because its whole parent rotates.
+ */
+.portrait-card__tilt {
   transform: rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
   transform-style: preserve-3d;
   will-change: transform;
@@ -290,15 +297,15 @@ body {
   filter: blur(6px);
 }
 
-/* Hover state is only reachable on devices that actually have a cursor. */
+/* Keep the image switch in CSS so it still works when JS motion is disabled. */
 @media (hover: hover) and (pointer: fine) {
-  .portrait-card[data-hovered] .portrait-card__img--base {
+  .portrait-card:hover .portrait-card__img--base {
     opacity: 0;
     transform: scale(1.04) rotate(-1deg);
     filter: blur(6px);
   }
 
-  .portrait-card[data-hovered] .portrait-card__img--hover {
+  .portrait-card:hover .portrait-card__img--hover {
     opacity: 1;
     transform: scale(1) rotate(0deg);
     filter: blur(0);
@@ -461,5 +468,14 @@ body {
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
+  }
+
+  /* Preserve a restrained opacity-only profile switch. */
+  .portrait-card__img {
+    transition-property: opacity !important;
+    transition-duration: 200ms !important;
+    transition-timing-function: linear !important;
+    transform: none !important;
+    filter: none !important;
   }
 }

@@ -80,25 +80,19 @@ export default function ProfileImageSwitcher({
         start();
       };
 
-      const onEnter = () => root.setAttribute("data-hovered", "true");
-
       const onLeave = () => {
-        root.removeAttribute("data-hovered");
         targetX = 0;
         targetY = 0;
         start();
       };
 
-      root.addEventListener("pointerenter", onEnter);
       root.addEventListener("pointermove", onMove);
       root.addEventListener("pointerleave", onLeave);
 
       return () => {
         cancelAnimationFrame(rafId);
-        root.removeEventListener("pointerenter", onEnter);
         root.removeEventListener("pointermove", onMove);
         root.removeEventListener("pointerleave", onLeave);
-        root.removeAttribute("data-hovered");
         root.style.removeProperty("--tilt-x");
         root.style.removeProperty("--tilt-y");
       };
