@@ -1,7 +1,6 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "motion/react";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { ArrowDownRight } from "lucide-react";
 import { profile, projects } from "@/data/content";
 import MagneticButton from "./MagneticButton";
@@ -16,17 +15,29 @@ const lines = [
 
 export default function Hero() {
   const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start start", "end start"],
-  });
-  const y = useTransform(scrollYProgress, [0, 1], [0, 140]);
-  const opacity = useTransform(scrollYProgress, [0, 0.75], [1, 0]);
+  const contentRef = useRef<HTMLDivElement>(null);
 
-  // running word count per line, so the stagger continues across line breaks
-  const lineOffsets = lines.reduce<number[]>((acc, line, i) => {
-    acc.push(i === 0 ? 0 : acc[i - 1] + lines[i - 1].length);
-    return acc;
+  useEffect(() => {
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const section = ref.current;
+      const content = contentRef.current;
+      if (!section || !content) return;
+      const rect = section.getBoundingClientRect();
+      const progress = Math.min(1, Math.max(0, -rect.top / rect.height));
+      content.style.transform = `translateY(${progress * 140}px)`;
+      content.style.opacity = String(1 - Math.min(1, progress / 0.75));
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (frame) cancelAnimationFrame(frame);
+    };
   }, []);
 
   return (
@@ -37,17 +48,12 @@ export default function Hero() {
     >
       <CursorGlow />
 
-      <motion.div
-        style={{ y, opacity }}
+      <div
+        ref={contentRef}
         className="relative z-10 mx-auto flex w-full max-w-7xl flex-1 flex-col justify-center"
       >
         {/* status row */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1, duration: 0.6 }}
-          className="flex flex-wrap items-center justify-between gap-4 text-xs uppercase tracking-[0.25em] text-fg-muted"
-        >
+        <div className="flex flex-wrap items-center justify-between gap-4 text-xs uppercase tracking-[0.25em] text-fg-muted">
           <span className="flex items-center gap-2.5">
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-70" />
@@ -56,43 +62,28 @@ export default function Hero() {
             {profile.status}
           </span>
           <span className="hidden sm:block">{profile.location}</span>
-        </motion.div>
+        </div>
 
         {/* headline */}
         <h1 className="mt-10 font-display text-[13.5vw] font-medium leading-[0.88] tracking-tight text-fg sm:text-[9vw] lg:text-[7vw]">
           {lines.map((line, li) => (
             <span key={li} className="block overflow-hidden py-[0.04em]">
-              {line.map((word, wi) => {
-                const delay = 0.2 + (lineOffsets[li] + wi) * 0.07;
-                return (
-                  <motion.span
+              {line.map((word) => (
+                  <span
                     key={word}
-                    initial={{ y: "108%" }}
-                    animate={{ y: 0 }}
-                    transition={{
-                      duration: 1,
-                      delay,
-                      ease: [0.16, 1, 0.3, 1],
-                    }}
                     className={`mr-[0.26em] inline-block ${
                       word === "ACTUALLY" ? "text-accent" : ""
                     }`}
                   >
                     {word}
-                  </motion.span>
-                );
-              })}
+                  </span>
+              ))}
             </span>
           ))}
         </h1>
 
         {/* sub row */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.95, duration: 0.7 }}
-          className="mt-12 grid gap-8 lg:grid-cols-12 lg:items-end"
-        >
+        <div className="mt-12 grid gap-8 lg:grid-cols-12 lg:items-end">
           <p className="max-w-lg text-balance text-lg leading-relaxed text-fg-muted lg:col-span-6">
             {profile.tagline} HND Software Engineering student at NIBM, shipping
             Flutter, Next.js, Spring Boot and native macOS work.
@@ -129,20 +120,15 @@ export default function Hero() {
               <ArrowDownRight className="h-4 w-4 transition-transform duration-300 group-hover:rotate-45" />
             </MagneticButton>
           </div>
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
 
       {/* ticker footer */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.25, duration: 0.7 }}
-        className="relative z-10 mx-auto mt-14 flex w-full max-w-7xl flex-wrap items-center justify-between gap-4 border-t border-border pt-6 text-[11px] uppercase tracking-[0.24em] text-fg-dim"
-      >
+      <div className="relative z-10 mx-auto mt-14 flex w-full max-w-7xl flex-wrap items-center justify-between gap-4 border-t border-border pt-6 text-[11px] uppercase tracking-[0.24em] text-fg-dim">
         <span>{projects.length} featured projects</span>
         <span className="hidden sm:block">17 public repositories</span>
         <span>Flutter · Next.js · Spring Boot · Swift</span>
-      </motion.div>
+      </div>
     </section>
   );
 }
