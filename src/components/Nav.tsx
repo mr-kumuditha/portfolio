@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { motion, AnimatePresence } from "motion/react";
+import * as m from "motion/react-m";
 import MagneticButton from "./MagneticButton";
 import SoundToggle from "./SoundToggle";
 
@@ -114,15 +114,15 @@ export default function Nav() {
               aria-label="Toggle menu"
               aria-expanded={open}
             >
-            <motion.span
+            <m.span
               animate={{ rotate: open ? 45 : 0, y: open ? 6 : 0 }}
               className="h-px w-6 bg-fg"
             />
-            <motion.span
+            <m.span
               animate={{ opacity: open ? 0 : 1 }}
               className="h-px w-6 bg-fg"
             />
-            <motion.span
+            <m.span
               animate={{ rotate: open ? -45 : 0, y: open ? -6 : 0 }}
               className="h-px w-6 bg-fg"
             />
@@ -131,18 +131,16 @@ export default function Nav() {
         </div>
       </header>
 
-      <AnimatePresence>
-        {open && (
-          <motion.div
+      {open && (
+          <m.div
             initial={{ clipPath: "inset(0 0 100% 0)" }}
             animate={{ clipPath: "inset(0 0 0% 0)" }}
-            exit={{ clipPath: "inset(0 0 100% 0)" }}
             transition={{ duration: 0.5, ease: [0.76, 0, 0.24, 1] }}
             className="fixed inset-0 z-40 flex flex-col justify-center bg-bg px-8 md:hidden"
           >
             <nav className="flex flex-col gap-6">
               {sections.map((s, i) => (
-                <motion.a
+                <m.a
                   key={s.id}
                   href={homeHref(s.id)}
                   onClick={() => setOpen(false)}
@@ -153,12 +151,11 @@ export default function Nav() {
                 >
                   <span className="mr-3 text-base text-accent">{s.num}</span>
                   {s.label}
-                </motion.a>
+                </m.a>
               ))}
             </nav>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </m.div>
+      )}
     </>
   );
 }
