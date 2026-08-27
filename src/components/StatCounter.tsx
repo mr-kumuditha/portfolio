@@ -1,7 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { animate, motion } from "motion/react";
+import { useEffect, useRef, useState } from "react";
 
 export default function StatCounter({
   value,
@@ -14,27 +13,36 @@ export default function StatCounter({
 }) {
   const [display, setDisplay] = useState(0);
   const started = useRef(false);
+  const elementRef = useRef<HTMLSpanElement>(null);
 
-  function start() {
-    if (started.current) return;
-    started.current = true;
+  useEffect(() => {
+    const element = elementRef.current;
+    if (!element) return;
 
-    animate(0, value, {
-      duration,
-      ease: [0.16, 1, 0.3, 1],
-      onUpdate: (latest) => setDisplay(Math.round(latest)),
-      // Guarantee the final number lands even if frames were throttled.
-      onComplete: () => setDisplay(value),
-    });
-  }
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting || started.current) return;
+      started.current = true;
+      const startedAt = performance.now();
+      let frame = 0;
+      const tick = (now: number) => {
+        const progress = Math.min(1, (now - startedAt) / (duration * 1000));
+        // Ease-out cubic retains the original quick, polished finish.
+        setDisplay(Math.round(value * (1 - (1 - progress) ** 3)));
+        if (progress < 1) frame = requestAnimationFrame(tick);
+      };
+      frame = requestAnimationFrame(tick);
+      observer.disconnect();
+      return () => cancelAnimationFrame(frame);
+    }, { rootMargin: "0px 0px -40px" });
+
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [duration, value]);
 
   return (
-    <motion.span
-      onViewportEnter={start}
-      viewport={{ once: true, margin: "-40px" }}
-    >
+    <span ref={elementRef}>
       {display}
       {suffix}
-    </motion.span>
+    </span>
   );
 }
