@@ -5,6 +5,7 @@ import { useRef } from "react";
 import { ArrowDownRight } from "lucide-react";
 import { profile, projects } from "@/data/content";
 import MagneticButton from "./MagneticButton";
+import CursorGlow from "./CursorGlow";
 import { GithubIcon, LinkedinIcon } from "./icons";
 
 const lines = [
@@ -34,6 +35,8 @@ export default function Hero() {
       ref={ref}
       className="relative flex min-h-[100svh] flex-col justify-between px-6 pt-32 pb-10 sm:px-10"
     >
+      <CursorGlow />
+
       <motion.div
         style={{ y, opacity }}
         className="relative z-10 mx-auto flex w-full max-w-7xl flex-1 flex-col justify-center"
@@ -102,7 +105,7 @@ export default function Hero() {
               rel="noopener noreferrer"
               data-cursor-hover
               aria-label="GitHub"
-              className="flex h-12 w-12 items-center justify-center rounded-full border border-border text-fg-muted transition-colors hover:border-accent hover:text-accent"
+              className="flex h-12 w-12 items-center justify-center neon-hover rounded-full border border-border text-fg-muted transition-colors hover:border-accent hover:text-accent"
             >
               <GithubIcon className="h-4 w-4" />
             </a>
@@ -112,7 +115,7 @@ export default function Hero() {
               rel="noopener noreferrer"
               data-cursor-hover
               aria-label="LinkedIn"
-              className="flex h-12 w-12 items-center justify-center rounded-full border border-border text-fg-muted transition-colors hover:border-accent hover:text-accent"
+              className="flex h-12 w-12 items-center justify-center neon-hover rounded-full border border-border text-fg-muted transition-colors hover:border-accent hover:text-accent"
             >
               <LinkedinIcon className="h-4 w-4" />
             </a>
