@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
+import * as m from "motion/react-m";
 import { about, profile, stats, education } from "@/data/content";
 import SectionHeading from "./SectionHeading";
 import StatCounter from "./StatCounter";
@@ -10,7 +10,7 @@ import { GithubIcon, LinkedinIcon } from "./icons";
 
 export default function About() {
   return (
-    <section id="about" className="relative px-6 py-28 sm:px-10 sm:py-36">
+    <section id="about" className="deferred-section relative px-6 py-28 sm:px-10 sm:py-36">
       <div className="mx-auto max-w-7xl">
         <SectionHeading num="01" eyebrow="About Me" title="Who I Am" />
 
@@ -18,7 +18,7 @@ export default function About() {
           {/* portrait */}
           <Reveal className="lg:col-span-5">
             <div className="relative mx-auto max-w-sm lg:mx-0">
-              <motion.div
+              <m.div
                 aria-hidden
                 animate={{ rotate: 360 }}
                 transition={{ duration: 26, repeat: Infinity, ease: "linear" }}
