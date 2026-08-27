@@ -13,7 +13,8 @@ type SoundState = {
   enabled: boolean;
   ready: boolean;
   toggle: () => void;
-  play: () => void;
+  play: (opts?: { loop?: boolean }) => void;
+  fadeOut: (ms?: number) => void;
 };
 
 const SoundCtx = createContext<SoundState | null>(null);
@@ -26,6 +27,7 @@ export function useSound() {
 
 const SRC = "/audio/intro.mp3";
 const STORAGE_KEY = "ktl:sound-muted";
+const BASE_VOLUME = 0.45;
 
 export function SoundProvider({ children }: { children: React.ReactNode }) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -37,7 +39,7 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const audio = new Audio(SRC);
     audio.preload = "auto";
-    audio.volume = 0.45;
+    audio.volume = BASE_VOLUME;
     audioRef.current = audio;
 
     let muted = false;
@@ -59,9 +61,12 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  const play = useCallback(() => {
+  const play = useCallback((opts?: { loop?: boolean }) => {
     const audio = audioRef.current;
     if (!audio) return;
+
+    audio.loop = opts?.loop ?? false;
+    audio.volume = BASE_VOLUME;
 
     audio
       .play()
@@ -83,6 +88,32 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
         window.addEventListener("wheel", start, opts);
         window.addEventListener("touchstart", start, opts);
       });
+  }, []);
+
+  // Ramps the volume down and stops, so the looping intro can end with the
+  // splash instead of cutting off mid-note.
+  const fadeOut = useCallback((ms = 900) => {
+    const audio = audioRef.current;
+    if (!audio || audio.paused) return;
+
+    const from = audio.volume;
+    const start = performance.now();
+
+    const step = () => {
+      const t = Math.min((performance.now() - start) / ms, 1);
+      audio.volume = from * (1 - t);
+      if (t < 1) {
+        requestAnimationFrame(step);
+        return;
+      }
+      audio.pause();
+      audio.loop = false;
+      audio.currentTime = 0;
+      audio.volume = BASE_VOLUME;
+      setEnabled(false);
+    };
+
+    requestAnimationFrame(step);
   }, []);
 
   const toggle = useCallback(() => {
@@ -128,7 +159,7 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
   }, [enabled]);
 
   return (
-    <SoundCtx.Provider value={{ enabled, ready, toggle, play }}>
+    <SoundCtx.Provider value={{ enabled, ready, toggle, play, fadeOut }}>
       {children}
     </SoundCtx.Provider>
   );
