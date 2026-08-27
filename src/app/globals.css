@@ -78,6 +78,18 @@ body {
   text-wrap: balance;
 }
 
+/* Let the browser skip layout and paint for sections that are still well
+   outside the viewport. Their HTML remains in the document for search and
+   assistive technology, while the initial screen becomes cheaper to render. */
+.deferred-section {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 900px;
+}
+
+.deferred-projects {
+  contain-intrinsic-size: auto 2200px;
+}
+
 /* ---------- animated background ---------- */
 
 .aurora {
@@ -222,6 +234,9 @@ body {
   .aurora {
     filter: blur(64px);
     opacity: 0.38;
+    /* The same colour field is retained, but continuous blur composition is
+       expensive on mobile GPUs and competes with the first text paint. */
+    animation: none;
   }
 
   .aurora-c {
@@ -236,6 +251,10 @@ body {
 
   .grid-floor {
     animation: none;
+  }
+
+  .grain {
+    display: none;
   }
 }
 
