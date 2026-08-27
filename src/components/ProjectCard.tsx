@@ -3,7 +3,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRef } from "react";
-import { motion, useMotionValue, useSpring, useTransform } from "motion/react";
 import { ArrowUpRight } from "lucide-react";
 import type { Project } from "@/data/content";
 
@@ -14,41 +13,27 @@ export default function ProjectCard({
   project: Project;
   onOpen: () => void;
 }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const mouseX = useMotionValue(0.5);
-  const mouseY = useMotionValue(0.5);
-
-  const rotateX = useSpring(useTransform(mouseY, [0, 1], [5, -5]), {
-    stiffness: 180,
-    damping: 20,
-  });
-  const rotateY = useSpring(useTransform(mouseX, [0, 1], [-5, 5]), {
-    stiffness: 180,
-    damping: 20,
-  });
-
-  const glowX = useTransform(mouseX, (v) => `${v * 100}%`);
-  const glowY = useTransform(mouseY, (v) => `${v * 100}%`);
-  const glow = useTransform(
-    [glowX, glowY],
-    ([x, y]) =>
-      `radial-gradient(420px circle at ${x} ${y}, ${project.accent}1f, transparent 62%)`
-  );
+  const ref = useRef<HTMLElement>(null);
+  const glowRef = useRef<HTMLSpanElement>(null);
 
   function handleMove(e: React.MouseEvent<HTMLDivElement>) {
-    const rect = ref.current?.getBoundingClientRect();
-    if (!rect) return;
-    mouseX.set((e.clientX - rect.left) / rect.width);
-    mouseY.set((e.clientY - rect.top) / rect.height);
+    const card = ref.current;
+    if (!card) return;
+    const rect = card.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width;
+    const y = (e.clientY - rect.top) / rect.height;
+    card.style.transform = `perspective(1200px) rotateX(${5 - y * 10}deg) rotateY(${-5 + x * 10}deg)`;
+    if (glowRef.current) {
+      glowRef.current.style.background = `radial-gradient(420px circle at ${x * 100}% ${y * 100}%, ${project.accent}1f, transparent 62%)`;
+    }
   }
 
   function handleLeave() {
-    mouseX.set(0.5);
-    mouseY.set(0.5);
+    if (ref.current) ref.current.style.transform = "perspective(1200px) rotateX(0deg) rotateY(0deg)";
   }
 
   return (
-    <motion.article
+    <article
       ref={ref}
       onMouseMove={handleMove}
       onMouseLeave={handleLeave}
@@ -63,13 +48,12 @@ export default function ProjectCard({
       tabIndex={0}
       aria-label={`View details for ${project.title}`}
       data-cursor-hover
-      style={{ rotateX, rotateY, transformPerspective: 1200 }}
-      className="card-sheen group relative cursor-pointer overflow-hidden rounded-3xl border border-border bg-bg-elevated/80 backdrop-blur-xl transition-colors duration-500 hover:border-border-strong"
+      className="card-sheen group relative cursor-pointer overflow-hidden rounded-3xl border border-border bg-bg-elevated/80 transition-[border-color,transform] duration-300 hover:border-border-strong"
     >
-      <motion.span
+      <span
+        ref={glowRef}
         aria-hidden
         className="pointer-events-none absolute inset-0 z-10 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-        style={{ background: glow }}
       />
 
       {/* preview */}
@@ -162,6 +146,6 @@ export default function ProjectCard({
           />
         </Link>
       </div>
-    </motion.article>
+    </article>
   );
 }
