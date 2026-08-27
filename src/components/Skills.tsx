@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
+import * as m from "motion/react-m";
 import { techGroups } from "@/data/content";
 import SectionHeading from "./SectionHeading";
 import Reveal from "./Reveal";
@@ -9,7 +9,7 @@ import Marquee from "./Marquee";
 
 export default function Skills() {
   return (
-    <section id="skills" className="relative px-6 py-28 sm:px-10 sm:py-36">
+    <section id="skills" className="deferred-section relative px-6 py-28 sm:px-10 sm:py-36">
       <div className="mx-auto max-w-7xl">
         <SectionHeading
           num="02"
@@ -35,7 +35,7 @@ export default function Skills() {
 
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                 {group.tech.map((tech, i) => (
-                  <motion.div
+                  <m.div
                     key={tech.name}
                     initial={{ opacity: 0, y: 14 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -69,7 +69,7 @@ export default function Skills() {
                     <span className="relative text-[11px] font-medium leading-tight text-fg-muted transition-colors duration-300 group-hover:text-fg">
                       {tech.name}
                     </span>
-                  </motion.div>
+                  </m.div>
                 ))}
               </div>
             </Reveal>
