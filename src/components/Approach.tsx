@@ -4,7 +4,7 @@ import Reveal from "./Reveal";
 
 export default function Approach() {
   return (
-    <section id="approach" className="relative px-6 py-28 sm:px-10 sm:py-36">
+    <section id="approach" className="deferred-section relative px-6 py-28 sm:px-10 sm:py-36">
       <div className="mx-auto max-w-7xl">
         <SectionHeading num="04" eyebrow="How I Work" title="My Approach" />
 
