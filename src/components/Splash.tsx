@@ -6,9 +6,9 @@ import { useSound } from "./SoundContext";
 import { profile } from "@/data/content";
 
 /** How long the splash holds before the exit wipe starts. */
-const DURATION = 15000;
+const DURATION = 2000;
 /** The counter finishes a beat early so 100% is readable before we leave. */
-const COUNT_DURATION = 14000;
+const COUNT_DURATION = 1700;
 
 const PHASES = [
   "initialising runtime",
@@ -24,9 +24,6 @@ const PHASES = [
 
 /**
  * Boot log lines, each revealed once the counter passes its threshold.
- *
- * Fifteen seconds is a long time to look at a number, so the log gives the
- * sequence something to actually do between the counter's stalls.
  */
 const LOG: { at: number; text: string }[] = [
   { at: 4, text: "init runtime — ok" },
@@ -45,8 +42,7 @@ const LOG: { at: number; text: string }[] = [
  * Control points for the loading counter, as [progress 0-1, percent 0-100].
  *
  * Deliberately uneven: real loading stalls, and a counter that sprints then
- * hesitates reads as alive where a linear ramp reads as a timer. Over 15s the
- * stalls matter more, so there are more of them and they sit longer.
+ * hesitates reads as alive where a linear ramp reads as a timer.
  */
 const CURVE: [number, number][] = [
   [0, 0],
@@ -99,9 +95,7 @@ export default function Splash() {
 
     if (!played.current) {
       played.current = true;
-      // The track is ~10s and the splash runs 15s, so loop it and fade out
-      // with the exit wipe rather than letting it stop in the middle.
-      play({ loop: true });
+      play();
     }
 
     const start = performance.now();
@@ -160,12 +154,12 @@ export default function Splash() {
           <motion.div
             className="absolute inset-x-0 top-0 h-1/2 bg-bg"
             exit={{ y: "-101%" }}
-            transition={{ duration: 0.9, delay: 0.3, ease: [0.76, 0, 0.24, 1] }}
+            transition={{ duration: 0.7, delay: 0.15, ease: [0.76, 0, 0.24, 1] }}
           />
           <motion.div
             className="absolute inset-x-0 bottom-0 h-1/2 bg-bg"
             exit={{ y: "101%" }}
-            transition={{ duration: 0.9, delay: 0.3, ease: [0.76, 0, 0.24, 1] }}
+            transition={{ duration: 0.7, delay: 0.15, ease: [0.76, 0, 0.24, 1] }}
           />
 
           {/* Everything else fades before the panels move. */}
@@ -182,7 +176,7 @@ export default function Splash() {
                 opacity: [0, 0.9, 0.5, 0.85, 0.55, 0.9],
                 scale: [0.6, 1.1, 0.95, 1.08, 1],
               }}
-              transition={{ duration: 14, ease: "easeInOut" }}
+              transition={{ duration: 1.8, ease: "easeInOut" }}
             />
 
             {/* grid, drawn in then held */}
@@ -195,14 +189,14 @@ export default function Splash() {
               }}
               initial={{ opacity: 0, scale: 1.15 }}
               animate={{ opacity: 0.07, scale: 1 }}
-              transition={{ duration: 2.4, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
             />
 
             {/* HUD corners */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 1.4, duration: 0.8 }}
+              transition={{ delay: 0.4, duration: 0.35 }}
               className="pointer-events-none absolute inset-0 hidden p-8 font-mono text-[10px] uppercase tracking-[0.28em] text-fg-dim sm:block"
             >
               <span className="absolute left-8 top-8">KTL — Portfolio</span>
@@ -255,8 +249,8 @@ export default function Splash() {
                   initial={{ width: 90, height: 90, opacity: 0 }}
                   animate={{ width: [90, 340], height: [90, 340], opacity: [0.55, 0] }}
                   transition={{
-                    duration: 3,
-                    delay: i * 1,
+                    duration: 1.2,
+                    delay: i * 0.25,
                     repeat: Infinity,
                     ease: "easeOut",
                   }}
@@ -271,8 +265,8 @@ export default function Splash() {
                     initial={{ y: "110%", opacity: 0 }}
                     animate={{ y: "0%", opacity: 1 }}
                     transition={{
-                      duration: 1.1,
-                      delay: 0.25 + i * 0.14,
+                      duration: 0.55,
+                      delay: 0.08 + i * 0.06,
                       ease: [0.16, 1, 0.3, 1],
                     }}
                     className="font-display text-6xl font-medium leading-none tracking-tight text-fg sm:text-7xl"
@@ -283,7 +277,7 @@ export default function Splash() {
                 <motion.span
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  transition={{ delay: 0.9, type: "spring", stiffness: 280 }}
+                  transition={{ delay: 0.32, type: "spring", stiffness: 280 }}
                   className="mb-1.5 ml-1 h-2.5 w-2.5 rounded-full bg-accent sm:h-3 sm:w-3"
                 />
 
@@ -293,10 +287,10 @@ export default function Splash() {
                   initial={{ x: "-160%" }}
                   animate={{ x: ["-160%", "460%"] }}
                   transition={{
-                    duration: 1.6,
-                    delay: 1.5,
+                    duration: 0.7,
+                    delay: 0.5,
                     repeat: Infinity,
-                    repeatDelay: 2.2,
+                    repeatDelay: 0.4,
                     ease: "easeInOut",
                   }}
                 />
@@ -329,7 +323,7 @@ export default function Splash() {
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ delay: 0.35, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
               className="relative mt-2 w-60 sm:w-80"
             >
               <div className="relative h-px w-full bg-border">
@@ -372,7 +366,7 @@ export default function Splash() {
             <motion.p
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 2, duration: 1 }}
+              transition={{ delay: 0.7, duration: 0.4 }}
               className="absolute bottom-16 text-[10px] uppercase tracking-[0.3em] text-fg-dim sm:bottom-20"
             >
               {profile.name}
