@@ -3,7 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence } from "motion/react";
+import * as m from "motion/react-m";
 import { ArrowUpRight, X } from "lucide-react";
 import type { Project } from "@/data/content";
 import { GithubIcon } from "./icons";
@@ -36,7 +37,7 @@ export default function ProjectModal({
         // One constant-keyed motion child that owns the exit animation.
         // AnimatePresence can only unmount a motion child, and keying by
         // project id makes every open a swap whose exit never settles.
-        <motion.div
+        <m.div
           key="project-modal"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -49,7 +50,7 @@ export default function ProjectModal({
             className="fixed inset-0 bg-bg/85 backdrop-blur-xl"
           />
 
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 36, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
@@ -125,7 +126,7 @@ export default function ProjectModal({
                 </p>
                 <div className="mt-5 grid gap-px overflow-hidden rounded-2xl border border-border bg-border sm:grid-cols-2">
                   {project.features.map((feature, i) => (
-                    <motion.div
+                    <m.div
                       key={feature.title}
                       initial={{ opacity: 0, y: 12 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -144,7 +145,7 @@ export default function ProjectModal({
                       <p className="mt-2 text-sm leading-relaxed text-fg-muted">
                         {feature.detail}
                       </p>
-                    </motion.div>
+                    </m.div>
                   ))}
                 </div>
               </div>
@@ -201,8 +202,8 @@ export default function ProjectModal({
                 </div>
               </aside>
             </div>
-          </motion.div>
-        </motion.div>
+          </m.div>
+        </m.div>
       )}
     </AnimatePresence>
   );
