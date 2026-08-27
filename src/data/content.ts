@@ -12,6 +12,8 @@ export const profile = {
   domain: "tharinda.dev",
   status: "Open to Internships",
   photo: "/profile.webp",
+  /** Shown on hover over the portrait card. Same 900x900 box as `photo`. */
+  photoAlt: "/profile-alt.webp",
 };
 
 export const about = {
