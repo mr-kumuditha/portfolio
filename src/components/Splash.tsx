@@ -81,6 +81,17 @@ export default function Splash() {
   const { play, fadeOut } = useSound();
   const played = useRef(false);
 
+  // The ring arc, bar fill and glow-head repaint every rAF frame. Driving
+  // them through React state (a Framer `animate` prop keyed to `count`)
+  // meant a fresh tween instantiation per frame — Safari's render pipeline
+  // stutters badly under that where Chromium mostly absorbs it. Writing
+  // straight to these refs bypasses React and Framer for the hot path;
+  // `count` state still exists for the text label, which only needs to
+  // repaint when the rounded number actually changes.
+  const ringArcRef = useRef<SVGCircleElement>(null);
+  const barFillRef = useRef<HTMLDivElement>(null);
+  const barHeadRef = useRef<HTMLSpanElement>(null);
+
   useEffect(() => {
     const reduced = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
@@ -107,7 +118,23 @@ export default function Splash() {
     // (background tab, reduced power mode), where rAF alone would freeze at 0.
     const update = () => {
       const t = Math.min((performance.now() - start) / COUNT_DURATION, 1);
-      setCount(Math.round(progressAt(t)));
+      const value = progressAt(t);
+
+      if (ringArcRef.current) {
+        ringArcRef.current.style.strokeDashoffset = String(
+          RING_C * (1 - value / 100)
+        );
+      }
+      if (barFillRef.current) {
+        barFillRef.current.style.transform = `scaleX(${value / 100})`;
+      }
+      if (barHeadRef.current) {
+        barHeadRef.current.style.left = `${value}%`;
+      }
+
+      // React bails out of the re-render when this equals the current state,
+      // so the text label only repaints when the rounded number changes.
+      setCount(Math.round(value));
       return t;
     };
 
@@ -225,8 +252,9 @@ export default function Splash() {
                   animate={{ rotate: 360 }}
                   transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
                 />
-                {/* progress arc */}
-                <motion.circle
+                {/* progress arc — offset written directly in the rAF loop above */}
+                <circle
+                  ref={ringArcRef}
                   cx="100"
                   cy="100"
                   r={RING_R}
@@ -235,9 +263,7 @@ export default function Splash() {
                   strokeWidth="1.4"
                   strokeLinecap="round"
                   strokeDasharray={RING_C}
-                  animate={{ strokeDashoffset: RING_C * (1 - count / 100) }}
-                  transition={{ ease: "linear", duration: 0.12 }}
-                  initial={{ strokeDashoffset: RING_C }}
+                  strokeDashoffset={RING_C}
                 />
               </svg>
 
@@ -327,17 +353,17 @@ export default function Splash() {
               className="relative mt-2 w-60 sm:w-80"
             >
               <div className="relative h-px w-full bg-border">
-                <motion.div
+                {/* fill + glow head — transform/left written directly in the
+                    rAF loop above, same reasoning as the ring arc */}
+                <div
+                  ref={barFillRef}
                   className="h-full w-full origin-left bg-accent"
-                  initial={{ scaleX: 0 }}
-                  animate={{ scaleX: count / 100 }}
-                  transition={{ ease: "linear", duration: 0.12 }}
+                  style={{ transform: "scaleX(0)" }}
                 />
-                {/* glow head riding the bar */}
-                <motion.span
+                <span
+                  ref={barHeadRef}
                   className="absolute top-1/2 h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-accent shadow-[0_0_12px_3px_var(--color-accent)]"
-                  animate={{ left: `${count}%` }}
-                  transition={{ ease: "linear", duration: 0.12 }}
+                  style={{ left: "0%" }}
                 />
               </div>
 
