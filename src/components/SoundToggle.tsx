@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
+import * as m from "motion/react-m";
 import { useSound } from "./SoundContext";
 
 const BARS = [0.35, 0.75, 0.5, 0.9, 0.45];
@@ -18,7 +18,7 @@ export default function SoundToggle() {
       className="flex h-9 items-center gap-[3px] rounded-full border border-border px-3.5 transition-colors duration-300 hover:border-accent"
     >
       {BARS.map((height, i) => (
-        <motion.span
+        <m.span
           key={i}
           className="w-[2px] rounded-full bg-accent"
           animate={
