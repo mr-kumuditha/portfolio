@@ -39,7 +39,7 @@ const faqJsonLd = {
 
 export default function Faq() {
   return (
-    <section id="faq" className="relative px-6 py-28 sm:px-10 sm:py-36">
+    <section id="faq" className="deferred-section relative px-6 py-28 sm:px-10 sm:py-36">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
