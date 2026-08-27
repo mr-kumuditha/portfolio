@@ -27,7 +27,7 @@ export default function Contact() {
   }
 
   return (
-    <section id="contact" className="relative px-6 py-28 sm:px-10 sm:py-36">
+    <section id="contact" className="deferred-section relative px-6 py-28 sm:px-10 sm:py-36">
       <div className="mx-auto max-w-7xl">
         <SectionHeading num="05" eyebrow="Get In Touch" title="Let's Connect" />
 
