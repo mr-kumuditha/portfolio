@@ -14,6 +14,8 @@ export const profile = {
   photo: "/profile.webp",
   /** Shown on hover over the portrait card. Same 900x900 box as `photo`. */
   photoAlt: "/profile-alt.webp",
+  /** Opens in-browser via <a target="_blank">; also offered as a direct download. */
+  resume: "/Kumuditha-Tharinda-Liyanage-CV.pdf",
 };
 
 export const about = {
@@ -25,8 +27,8 @@ export const about = {
 };
 
 export const stats = [
-  { value: 17, suffix: "", label: "Public Repositories" },
-  { value: 8, suffix: "", label: "Featured Projects" },
+  { value: 19, suffix: "", label: "Public Repositories" },
+  { value: 9, suffix: "", label: "Featured Projects" },
   { value: 6, suffix: "", label: "Languages Shipped" },
   { value: 25, suffix: "+", label: "Technologies Used" },
 ];
@@ -569,6 +571,64 @@ export const projects: Project[] = [
     accent: "#22D3EE",
     image: "/projects/iot-safety.webp",
     repo: "https://github.com/mr-kumuditha/IoT-Safety-Monitoring-System",
+    language: "TypeScript",
+  },
+  {
+    id: "rehearsal",
+    index: "09",
+    category: "Engineering Lab · Full Stack",
+    year: "2026",
+    title: "Rehearsal",
+    subtitle: "An API Reliability Workbench",
+    tagline: "Did the operation fail, or did we just lose the reply?",
+    description:
+      "An API reliability workbench for rehearsing timeouts, duplicate events, rate limits and recovery strategies over real HTTP — not a scripted animation.",
+    overview:
+      "Rehearsal sends an order through inventory, payment and delivery sandbox APIs, lets you inject one failure — a lost response, a duplicate event, a rate limit, an unexpected shape — and watches the requests unfold against the provider ledgers. Run the same scenario again with a recovery strategy and compare outcomes side by side, backed by real HTTP calls and real ledgers rather than a simulated timeline. The hosted deployment pairs a Vercel web app with a real HTTP backend on a DigitalOcean VPS, routing delivery through WSO2 API Manager with server-side OAuth client credentials.",
+    features: [
+      {
+        title: "Four Failure Scenarios",
+        detail:
+          "Lost response, duplicate event, rate limit and unexpected response shape, each with its own recovery strategy.",
+      },
+      {
+        title: "Baseline vs Recovery",
+        detail:
+          "Run a fault with and without a recovery strategy, then compare committed-operation charts side by side.",
+      },
+      {
+        title: "Live Event Trace",
+        detail:
+          "Keyboard-accessible event playback with directional flow animation across the three provider nodes.",
+      },
+      {
+        title: "Downloadable Reports",
+        detail:
+          "PDF run reports with a ledger chart and full trace, plus the original JSON kept available separately.",
+      },
+      {
+        title: "Real HTTP, Real Ledgers",
+        detail:
+          "Three sandbox providers with per-run isolation and idempotency handling — no scripted fixtures.",
+      },
+      {
+        title: "WSO2 API Gateway",
+        detail:
+          "The hosted delivery path runs through WSO2 API Manager with server-side OAuth, verified against real token rejection and throttling checks.",
+      },
+    ],
+    stack: [
+      "TypeScript",
+      "Next.js",
+      "Node.js",
+      "SQLite",
+      "WSO2 API Manager",
+      "Docker",
+      "DigitalOcean",
+    ],
+    accent: "#F472B6",
+    image: "/projects/rehearsal.webp",
+    repo: "https://github.com/mr-kumuditha/rehearsal",
     language: "TypeScript",
   },
 ];
