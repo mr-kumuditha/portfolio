@@ -5,6 +5,8 @@ import { usePathname } from "next/navigation";
 import * as m from "motion/react-m";
 import MagneticButton from "./MagneticButton";
 import SoundToggle from "./SoundToggle";
+import { DownloadIcon } from "./icons";
+import { profile } from "@/data/content";
 
 const sections = [
   { id: "about", label: "About", num: "01" },
@@ -99,6 +101,27 @@ export default function Nav() {
           <div className="flex items-center gap-3">
             <SoundToggle />
 
+            <div className="hidden items-stretch overflow-hidden rounded-full border border-border md:flex">
+              <a
+                href={profile.resume}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-cursor-hover
+                className="px-5 py-2 text-xs font-medium uppercase tracking-[0.2em] text-fg-muted transition-colors hover:text-accent"
+              >
+                Resume
+              </a>
+              <a
+                href={profile.resume}
+                download="Kumuditha-Tharinda-Liyanage-CV.pdf"
+                data-cursor-hover
+                aria-label="Download resume PDF"
+                className="flex items-center border-l border-border px-3 text-fg-muted transition-colors hover:text-accent"
+              >
+                <DownloadIcon className="h-3.5 w-3.5" />
+              </a>
+            </div>
+
             <MagneticButton
               as="a"
               href={homeHref("contact")}
@@ -153,6 +176,33 @@ export default function Nav() {
                   {s.label}
                 </m.a>
               ))}
+
+              <m.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15 + sections.length * 0.06 }}
+                className="mt-2 flex items-center gap-4 border-t border-border pt-6"
+              >
+                <a
+                  href={profile.resume}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setOpen(false)}
+                  data-cursor-hover
+                  className="font-display text-2xl font-medium text-fg"
+                >
+                  Resume
+                </a>
+                <a
+                  href={profile.resume}
+                  download="Kumuditha-Tharinda-Liyanage-CV.pdf"
+                  data-cursor-hover
+                  aria-label="Download resume PDF"
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-border text-fg-muted transition-colors hover:border-accent hover:text-accent"
+                >
+                  <DownloadIcon className="h-4 w-4" />
+                </a>
+              </m.div>
             </nav>
           </m.div>
       )}
