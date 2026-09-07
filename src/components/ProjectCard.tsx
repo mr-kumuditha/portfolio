@@ -6,6 +6,7 @@ import { useEffect, useRef } from "react";
 import { ArrowUpRight } from "lucide-react";
 import type { Project } from "@/data/content";
 import { damp, withPointerEffects } from "@/lib/pointer";
+import { GithubIcon, GlobeIcon } from "./icons";
 
 /** Peak tilt in degrees at the edges of the card. */
 const MAX_TILT = 5;
@@ -187,24 +188,73 @@ export default function ProjectCard({
           )}
         </div>
 
-        <Link
-          href={`/projects/${project.id}`}
-          className="relative z-20 mt-6 flex w-fit items-center gap-2 text-[11px] uppercase tracking-[0.22em] text-fg-dim transition-colors duration-300 hover:text-fg-muted"
-        >
-          Read full case study
-          <span
-            className="h-px w-6 transition-all duration-400 group-hover:w-10"
-            style={{ background: project.accent }}
-          />
-        </Link>
+        <div className="mt-6 flex items-center justify-between gap-4">
+          <Link
+            href={`/projects/${project.id}`}
+            className="relative z-20 flex w-fit items-center gap-2 text-[11px] uppercase tracking-[0.22em] text-fg-dim transition-colors duration-300 hover:text-fg-muted"
+          >
+            Read full case study
+            <span
+              className="h-px w-6 transition-all duration-400 group-hover:w-10"
+              style={{ background: project.accent }}
+            />
+          </Link>
+
+          <div className="relative z-20 flex items-center gap-2">
+            {project.repo && (
+              <a
+                href={project.repo}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`${project.title} source on GitHub`}
+                title="View source on GitHub"
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-border text-fg-muted transition-colors duration-300 hover:border-accent hover:text-accent"
+              >
+                <GithubIcon className="h-3.5 w-3.5" />
+              </a>
+            )}
+            {project.demo && (
+              <a
+                href={project.demo}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`${project.title} live site`}
+                title="Open the live site"
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-border text-fg-muted transition-colors duration-300 hover:border-accent hover:text-accent"
+                style={{ borderColor: `${project.accent}55`, color: project.accent }}
+              >
+                <GlobeIcon className="h-3.5 w-3.5" />
+              </a>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* The click target. Sits above the visuals but below the case-study
           link (z-20) so that link stays independently reachable and
-          clickable instead of being trapped inside this button. */}
-      <button
-        type="button"
-        onClick={onOpen}
+          clickable instead of being trapped inside this overlay.
+
+          A real <a>, not a <button>: hydration of this page lands a couple of
+          seconds after the cards are painted, and a button's onClick does
+          nothing until it does — clicks in that window were silently dropped.
+          As a link it navigates to the same case study without JS, and once
+          hydrated the handler below intercepts it and opens the modal
+          instead. Modifier-clicks fall through so open-in-new-tab still
+          works. */}
+      <a
+        href={`/projects/${project.id}`}
+        onClick={(event) => {
+          if (
+            event.metaKey ||
+            event.ctrlKey ||
+            event.shiftKey ||
+            event.altKey
+          ) {
+            return;
+          }
+          event.preventDefault();
+          onOpen();
+        }}
         aria-label={`View details for ${project.title}`}
         className="absolute inset-0 z-10 cursor-pointer rounded-3xl"
       />
