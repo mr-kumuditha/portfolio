@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
 
 import { getProjectBySlug, profile, projects } from "@/data/content";
-import { GithubIcon } from "@/components/icons";
+import { GithubIcon, GlobeIcon } from "@/components/icons";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -74,6 +74,9 @@ export default async function ProjectCaseStudy({ params }: Props) {
       url: `https://${profile.domain}`,
     },
     ...(project.repo ? { codeRepository: project.repo } : {}),
+    // The hosted build is what a reader can actually try, so it's the
+    // canonical "install" target for a SoftwareApplication.
+    ...(project.demo ? { installUrl: project.demo, sameAs: project.demo } : {}),
     keywords: project.stack.join(", "),
   };
 
@@ -162,13 +165,31 @@ export default async function ProjectCaseStudy({ params }: Props) {
                   </li>
                 ))}
               </ul>
+              {project.demo && (
+                <a
+                  href={project.demo}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-8 flex items-center justify-between rounded-full px-5 py-3.5 text-sm font-medium"
+                  style={{ background: project.accent, color: "#08090a" }}
+                >
+                  <span className="flex items-center gap-2"><GlobeIcon className="h-4 w-4" /> Visit live site</span>
+                  <ArrowUpRight className="h-4 w-4" />
+                </a>
+              )}
               {project.repo && (
                 <a
                   href={project.repo}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-8 flex items-center justify-between rounded-full px-5 py-3.5 text-sm font-medium"
-                  style={{ background: project.accent, color: "#08090a" }}
+                  className={`flex items-center justify-between rounded-full border px-5 py-3.5 text-sm font-medium ${
+                    project.demo ? "mt-3" : "mt-8"
+                  }`}
+                  style={
+                    project.demo
+                      ? { borderColor: `${project.accent}55`, color: project.accent }
+                      : { background: project.accent, borderColor: "transparent", color: "#08090a" }
+                  }
                 >
                   <span className="flex items-center gap-2"><GithubIcon className="h-4 w-4" /> View source on GitHub</span>
                   <ArrowUpRight className="h-4 w-4" />

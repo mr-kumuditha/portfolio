@@ -134,6 +134,8 @@ export type Project = {
   accent: string;
   image: string;
   repo?: string;
+  /** Hosted, publicly reachable build of the project. */
+  demo?: string;
   language: string;
 };
 
@@ -355,6 +357,7 @@ export const projects: Project[] = [
     accent: "#E5B567",
     image: "/projects/ever-after-wedding.webp",
     repo: "https://github.com/mr-kumuditha/ever-after-wedding",
+    demo: "https://ever-after-wedding.vercel.app",
     language: "TypeScript",
   },
   {
@@ -571,6 +574,7 @@ export const projects: Project[] = [
     accent: "#22D3EE",
     image: "/projects/iot-safety.webp",
     repo: "https://github.com/mr-kumuditha/IoT-Safety-Monitoring-System",
+    demo: "https://io-t-based-mining-worker-safety-hel.vercel.app",
     language: "TypeScript",
   },
   {
@@ -629,6 +633,7 @@ export const projects: Project[] = [
     accent: "#F472B6",
     image: "/projects/rehearsal.webp",
     repo: "https://github.com/mr-kumuditha/rehearsal",
+    demo: "https://rehearsal.tharinda.dev",
     language: "TypeScript",
   },
 ];

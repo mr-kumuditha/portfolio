@@ -7,7 +7,7 @@ import { AnimatePresence } from "motion/react";
 import * as m from "motion/react-m";
 import { ArrowUpRight, X } from "lucide-react";
 import type { Project } from "@/data/content";
-import { GithubIcon } from "./icons";
+import { GithubIcon, GlobeIcon } from "./icons";
 
 export default function ProjectModal({
   project,
@@ -178,9 +178,9 @@ export default function ProjectModal({
                       Read the full case study →
                     </Link>
 
-                    {project.repo && (
+                    {project.demo && (
                       <a
-                        href={project.repo}
+                        href={project.demo}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="group mt-6 flex items-center justify-between gap-3 rounded-full px-5 py-3.5 text-sm font-medium transition-transform duration-300 hover:-translate-y-0.5"
@@ -188,6 +188,28 @@ export default function ProjectModal({
                           background: project.accent,
                           color: "#08090a",
                         }}
+                      >
+                        <span className="flex items-center gap-2.5">
+                          <GlobeIcon className="h-4 w-4" />
+                          Visit live site
+                        </span>
+                        <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                      </a>
+                    )}
+
+                    {project.repo && (
+                      <a
+                        href={project.repo}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`group flex items-center justify-between gap-3 rounded-full border px-5 py-3.5 text-sm font-medium transition-transform duration-300 hover:-translate-y-0.5 ${
+                          project.demo ? "mt-3" : "mt-6"
+                        }`}
+                        style={
+                          project.demo
+                            ? { borderColor: `${project.accent}55`, color: project.accent }
+                            : { background: project.accent, borderColor: "transparent", color: "#08090a" }
+                        }
                       >
                         <span className="flex items-center gap-2.5">
                           <GithubIcon className="h-4 w-4" />
