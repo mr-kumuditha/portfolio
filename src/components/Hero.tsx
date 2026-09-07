@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { ArrowDownRight } from "lucide-react";
-import { profile, projects } from "@/data/content";
+import { profile, projects, stats } from "@/data/content";
 import MagneticButton from "./MagneticButton";
 import CursorGlow from "./CursorGlow";
 import { GithubIcon, LinkedinIcon } from "./icons";
@@ -94,7 +94,6 @@ export default function Hero() {
               href={profile.github}
               target="_blank"
               rel="noopener noreferrer"
-              data-cursor-hover
               aria-label="GitHub"
               className="flex h-12 w-12 items-center justify-center neon-hover rounded-full border border-border text-fg-muted transition-colors hover:border-accent hover:text-accent"
             >
@@ -104,7 +103,6 @@ export default function Hero() {
               href={profile.linkedin}
               target="_blank"
               rel="noopener noreferrer"
-              data-cursor-hover
               aria-label="LinkedIn"
               className="flex h-12 w-12 items-center justify-center neon-hover rounded-full border border-border text-fg-muted transition-colors hover:border-accent hover:text-accent"
             >
@@ -124,9 +122,14 @@ export default function Hero() {
       </div>
 
       {/* ticker footer */}
-      <div className="relative z-10 mx-auto mt-14 flex w-full max-w-7xl flex-wrap items-center justify-between gap-4 border-t border-border pt-6 text-[11px] uppercase tracking-[0.24em] text-fg-dim">
+      {/* text-fg-muted, not text-fg-dim: at 11px this text needs the WCAG AA
+          4.5:1 small-text threshold, which fg-dim falls short of (~3.2:1). */}
+      <div className="relative z-10 mx-auto mt-14 flex w-full max-w-7xl flex-wrap items-center justify-between gap-4 border-t border-border pt-6 text-[11px] uppercase tracking-[0.24em] text-fg-muted">
         <span>{projects.length} featured projects</span>
-        <span className="hidden sm:block">17 public repositories</span>
+        <span className="hidden sm:block">
+          {stats.find((s) => s.label === "Public Repositories")?.value}{" "}
+          public repositories
+        </span>
         <span>Flutter · Next.js · Spring Boot · Swift</span>
       </div>
     </section>
