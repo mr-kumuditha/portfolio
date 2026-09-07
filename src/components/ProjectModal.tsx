@@ -61,7 +61,6 @@ export default function ProjectModal({
           >
             <button
               onClick={onClose}
-              data-cursor-hover
               aria-label="Close"
               className="absolute right-4 top-4 z-20 flex h-10 w-10 items-center justify-center rounded-full border border-border bg-bg/70 text-fg-muted backdrop-blur-md transition-colors hover:border-border-strong hover:text-fg"
             >
@@ -184,7 +183,6 @@ export default function ProjectModal({
                         href={project.repo}
                         target="_blank"
                         rel="noopener noreferrer"
-                        data-cursor-hover
                         className="group mt-6 flex items-center justify-between gap-3 rounded-full px-5 py-3.5 text-sm font-medium transition-transform duration-300 hover:-translate-y-0.5"
                         style={{
                           background: project.accent,

@@ -48,7 +48,6 @@ export default function About() {
                       href={profile.github}
                       target="_blank"
                       rel="noopener noreferrer"
-                      data-cursor-hover
                       aria-label="GitHub"
                       className="flex h-9 w-9 items-center justify-center neon-hover rounded-full border border-border bg-bg/60 text-fg-muted backdrop-blur-md transition-colors hover:border-accent hover:text-accent"
                     >
@@ -58,7 +57,6 @@ export default function About() {
                       href={profile.linkedin}
                       target="_blank"
                       rel="noopener noreferrer"
-                      data-cursor-hover
                       aria-label="LinkedIn"
                       className="flex h-9 w-9 items-center justify-center neon-hover rounded-full border border-border bg-bg/60 text-fg-muted backdrop-blur-md transition-colors hover:border-accent hover:text-accent"
                     >

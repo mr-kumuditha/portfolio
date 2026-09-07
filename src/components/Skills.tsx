@@ -46,7 +46,6 @@ export default function Skills() {
                       ease: [0.16, 1, 0.3, 1],
                     }}
                     whileHover={{ y: -4 }}
-                    data-cursor-hover
                     className="group relative flex flex-col items-center gap-2.5 rounded-2xl border border-border/60 bg-bg/40 px-3 py-5 text-center transition-colors duration-300"
                     style={
                       {

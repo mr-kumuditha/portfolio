@@ -68,12 +68,6 @@ body {
   background: var(--accent-dim);
 }
 
-@media (pointer: fine) {
-  .cursor-none-fine {
-    cursor: none;
-  }
-}
-
 .text-balance {
   text-wrap: balance;
 }

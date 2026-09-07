@@ -71,7 +71,6 @@ export default function Nav() {
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5 sm:px-10">
           <a
             href={pathname === "/" ? "#top" : "/"}
-            data-cursor-hover
             className="font-display text-sm font-medium tracking-widest text-fg"
           >
             KTL<span className="text-accent">.</span>
@@ -82,7 +81,6 @@ export default function Nav() {
               <a
                 key={s.id}
                 href={homeHref(s.id)}
-                data-cursor-hover
                 className={`group relative text-xs font-medium uppercase tracking-[0.2em] transition-colors ${
                   active === s.id ? "text-accent" : "text-fg-muted hover:text-fg"
                 }`}
@@ -106,7 +104,6 @@ export default function Nav() {
                 href={profile.resume}
                 target="_blank"
                 rel="noopener noreferrer"
-                data-cursor-hover
                 className="px-5 py-2 text-xs font-medium uppercase tracking-[0.2em] text-fg-muted transition-colors hover:text-accent"
               >
                 Resume
@@ -114,7 +111,6 @@ export default function Nav() {
               <a
                 href={profile.resume}
                 download="Kumuditha-Tharinda-Liyanage-CV.pdf"
-                data-cursor-hover
                 aria-label="Download resume PDF"
                 className="flex items-center border-l border-border px-3 text-fg-muted transition-colors hover:text-accent"
               >
@@ -132,7 +128,6 @@ export default function Nav() {
 
             <button
               onClick={() => setOpen((o) => !o)}
-              data-cursor-hover
               className="relative z-50 flex h-9 w-9 flex-col items-center justify-center gap-1.5 md:hidden"
               aria-label="Toggle menu"
               aria-expanded={open}
@@ -188,7 +183,6 @@ export default function Nav() {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => setOpen(false)}
-                  data-cursor-hover
                   className="font-display text-2xl font-medium text-fg"
                 >
                   Resume
@@ -196,7 +190,6 @@ export default function Nav() {
                 <a
                   href={profile.resume}
                   download="Kumuditha-Tharinda-Liyanage-CV.pdf"
-                  data-cursor-hover
                   aria-label="Download resume PDF"
                   className="flex h-9 w-9 items-center justify-center rounded-full border border-border text-fg-muted transition-colors hover:border-accent hover:text-accent"
                 >

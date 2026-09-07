@@ -50,7 +50,6 @@ export default function Contact() {
 
           <button
             onClick={copyEmail}
-            data-cursor-hover
             className="flex items-center gap-3 rounded-full border border-border px-7 py-4 text-sm text-fg-muted transition-colors duration-300 hover:border-accent hover:text-fg"
           >
             {profile.email}
@@ -70,7 +69,6 @@ export default function Contact() {
                 href={href}
                 target="_blank"
                 rel="noopener noreferrer"
-                data-cursor-hover
                 className="group flex items-center justify-between gap-4 bg-bg-elevated p-7 transition-colors duration-300 hover:bg-bg"
               >
                 <span className="flex items-center gap-4">

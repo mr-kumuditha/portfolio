@@ -11,7 +11,6 @@ export default function SoundToggle() {
   return (
     <button
       onClick={toggle}
-      data-cursor-hover
       aria-pressed={enabled}
       aria-label={enabled ? "Mute background music" : "Play background music"}
       title={enabled ? "Mute" : "Play music"}

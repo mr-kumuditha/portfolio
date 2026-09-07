@@ -107,7 +107,7 @@ export default function MagneticButton({
   }, []);
 
   return (
-    <div ref={ref} className="magnetic inline-block" data-cursor-hover>
+    <div ref={ref} className="magnetic inline-block">
       <Tag className={`inline-block ${className}`} {...tagProps}>
         {children}
       </Tag>
