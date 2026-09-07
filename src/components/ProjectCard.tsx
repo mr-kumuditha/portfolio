@@ -2,9 +2,15 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { ArrowUpRight } from "lucide-react";
 import type { Project } from "@/data/content";
+import { damp, withPointerEffects } from "@/lib/pointer";
+
+/** Peak tilt in degrees at the edges of the card. */
+const MAX_TILT = 5;
+/** How quickly the tilt catches up to the pointer, per frame. */
+const TILT_EASE = 0.15;
 
 export default function ProjectCard({
   project,
@@ -13,42 +19,89 @@ export default function ProjectCard({
   project: Project;
   onOpen: () => void;
 }) {
-  const ref = useRef<HTMLElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
   const glowRef = useRef<HTMLSpanElement>(null);
 
-  function handleMove(e: React.MouseEvent<HTMLDivElement>) {
+  useEffect(() => {
     const card = ref.current;
     if (!card) return;
-    const rect = card.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width;
-    const y = (e.clientY - rect.top) / rect.height;
-    card.style.transform = `perspective(1200px) rotateX(${5 - y * 10}deg) rotateY(${-5 + x * 10}deg)`;
-    if (glowRef.current) {
-      glowRef.current.style.background = `radial-gradient(420px circle at ${x * 100}% ${y * 100}%, ${project.accent}1f, transparent 62%)`;
-    }
-  }
 
-  function handleLeave() {
-    if (ref.current) ref.current.style.transform = "perspective(1200px) rotateX(0deg) rotateY(0deg)";
-  }
+    return withPointerEffects(() => {
+      let rafId = 0;
+      // Eased rather than applied instantly: an unclamped jump straight to
+      // the pointer's transform would shift the card's rendered geometry
+      // out from under the cursor on the same event that positions it,
+      // which can turn a click into a miss on "Read full case study"
+      // sitting just above this button in stacking order.
+      let targetX = 0;
+      let targetY = 0;
+      let currentX = 0;
+      let currentY = 0;
+      let running = false;
+
+      const settle = () => {
+        currentX = damp(currentX, targetX, TILT_EASE);
+        currentY = damp(currentY, targetY, TILT_EASE);
+        card.style.transform = `perspective(1200px) rotateX(${currentY * -MAX_TILT}deg) rotateY(${currentX * MAX_TILT}deg)`;
+
+        const atRest =
+          Math.abs(currentX - targetX) < 0.001 &&
+          Math.abs(currentY - targetY) < 0.001;
+        if (atRest) {
+          running = false;
+          return;
+        }
+        rafId = requestAnimationFrame(settle);
+      };
+
+      const start = () => {
+        if (running) return;
+        running = true;
+        rafId = requestAnimationFrame(settle);
+      };
+
+      const onMove = (event: PointerEvent) => {
+        const rect = card.getBoundingClientRect();
+        const x = (event.clientX - rect.left) / rect.width;
+        const y = (event.clientY - rect.top) / rect.height;
+        targetX = x * 2 - 1;
+        targetY = y * 2 - 1;
+        if (glowRef.current) {
+          glowRef.current.style.background = `radial-gradient(420px circle at ${x * 100}% ${y * 100}%, ${project.accent}1f, transparent 62%)`;
+        }
+        start();
+      };
+
+      const onLeave = () => {
+        targetX = 0;
+        targetY = 0;
+        start();
+      };
+
+      card.addEventListener("pointermove", onMove);
+      card.addEventListener("pointerleave", onLeave);
+
+      return () => {
+        cancelAnimationFrame(rafId);
+        card.removeEventListener("pointermove", onMove);
+        card.removeEventListener("pointerleave", onLeave);
+        card.style.transform = "";
+      };
+    });
+  }, [project.accent]);
 
   return (
-    <article
+    // Plain div, not <article> — ARIA forbids remapping a sectioning
+    // element's role to "button". The click target itself is a real
+    // <button> below, an overlay sibling of the "Read full case study"
+    // link rather than its ancestor: a role="button" wrapper around a
+    // real <a> is a nested-interactive violation (screen readers can't
+    // reach the inner link), and it's two genuinely different actions
+    // anyway — this card opens a quick-look modal, the link navigates
+    // to the dedicated case-study page.
+    <div
       ref={ref}
-      onMouseMove={handleMove}
-      onMouseLeave={handleLeave}
-      onClick={onOpen}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          onOpen();
-        }
-      }}
-      role="button"
-      tabIndex={0}
-      aria-label={`View details for ${project.title}`}
-      data-cursor-hover
-      className="card-sheen group relative cursor-pointer overflow-hidden rounded-3xl border border-border bg-bg-elevated/80 transition-[border-color,transform] duration-300 hover:border-border-strong"
+      className="card-sheen group relative overflow-hidden rounded-3xl border border-border bg-bg-elevated/80 transition-[border-color,transform] duration-300 hover:border-border-strong"
     >
       <span
         ref={glowRef}
@@ -136,7 +189,6 @@ export default function ProjectCard({
 
         <Link
           href={`/projects/${project.id}`}
-          onClick={(event) => event.stopPropagation()}
           className="relative z-20 mt-6 flex w-fit items-center gap-2 text-[11px] uppercase tracking-[0.22em] text-fg-dim transition-colors duration-300 hover:text-fg-muted"
         >
           Read full case study
@@ -146,6 +198,16 @@ export default function ProjectCard({
           />
         </Link>
       </div>
-    </article>
+
+      {/* The click target. Sits above the visuals but below the case-study
+          link (z-20) so that link stays independently reachable and
+          clickable instead of being trapped inside this button. */}
+      <button
+        type="button"
+        onClick={onOpen}
+        aria-label={`View details for ${project.title}`}
+        className="absolute inset-0 z-10 cursor-pointer rounded-3xl"
+      />
+    </div>
   );
 }
